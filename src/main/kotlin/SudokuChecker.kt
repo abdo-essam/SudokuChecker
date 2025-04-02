@@ -1,7 +1,7 @@
 import kotlin.math.sqrt
 
 class SudokuChecker {
-    // companion object to Makes the functions easily accessible without instantiation
+    // companion object to makes the functions easily accessible without instantiation
     companion object {
 
         fun isSudokuValid(board: Array<Array<Char>>): Boolean {
@@ -18,10 +18,8 @@ class SudokuChecker {
             val boxSize = sqrt(size.toDouble()).toInt()
 
             // Check if size is a perfect square
-            if (boxSize * boxSize != size) return false
-
             // Check if all rows have correct length
-            return board.all { it.size == size }
+            return boxSize * boxSize == size && board.all { it.size == size }
         }
 
         // hasValidCharacters: Checks if only valid numbers and '-' are used
@@ -75,6 +73,7 @@ class SudokuChecker {
         }
 
         // isValidGroup: Generic function for checking duplicates in any group
+        // check row, colum and box
         private fun isValidGroup(group: List<Char>): Boolean {
             val seen = mutableSetOf<Char>()
             return group.all { char ->
