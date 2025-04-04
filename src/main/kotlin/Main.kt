@@ -1,3 +1,3 @@
 fun main() {
-    SudokuBenchmark.runBenchmark()
+    //SudokuBenchmark.runBenchmark()
 }

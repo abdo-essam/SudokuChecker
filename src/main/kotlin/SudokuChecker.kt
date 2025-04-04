@@ -23,6 +23,16 @@ class SudokuChecker {
         }
 
         // hasValidCharacters: Checks if only valid numbers and '-' are used
+        /**
+         * Why is Set efficient here?
+         * Imagine you have a 9x9 board (81 cells).
+         * The code checks each cell's character against the validChars set.
+         * If validChars was a List instead of a Set,
+         * checking it in validChars would potentially require scanning through the list items one by one (O(N) lookup, where N is the number of valid characters).
+         * Doing this 81 times would be slower.
+         * Since Set provides O(1) average lookup time, checking all 81 cells is much faster.
+         * The larger the board, the more significant this efficiency gain becomes.
+         **/
         private fun hasValidCharacters(board: Array<Array<Char>>): Boolean {
             val size = board.size
             val validChars = (('1'..('0' + size)).toSet() + '-')
