@@ -1,94 +1,62 @@
 import kotlin.math.sqrt
 
-class SudokuChecker {
-    // companion object to makes the functions easily accessible without instantiation
-    companion object {
 
-        fun isSudokuValid(board: Array<Array<Char>>): Boolean {
-            return hasValidDimensions(board) &&
-                    hasValidCharacters(board) &&
-                    hasValidRows(board) &&
-                    hasValidColumns(board) &&
-                    hasValidBoxes(board)
-        }
+// todo : I want to reduce the time complexity from O(3n²) to O(n²)
+//  by combine row, column, and box checking into a single pass
+// Row validation: O(n²) & Column validation: O(n²) & Box validation: O(n²) Total: O(n² + n² + n²) = O(3n²)
 
-        // hasValidDimensions: Ensures the board is a perfect square
-        private fun hasValidDimensions(board: Array<Array<Char>>): Boolean {
-            val size = board.size
-            val boxSize = sqrt(size.toDouble()).toInt()
+fun isSudokuValid(board: Array<Array<Char>>): Boolean {
+    return hasValidDimensions(board) &&
+            hasValidCharacters(board) &&
+            hasValidRowsColumnsAndBoxes(board)
+}
 
-            // Check if size is a perfect square
-            // Check if all rows have correct length
-            return boxSize * boxSize == size && board.all { it.size == size }
-        }
+// Ensures the board is a perfect square
+private fun hasValidDimensions(board: Array<Array<Char>>): Boolean {
+    val size = board.size
+    val boxSize = sqrt(size.toDouble()).toInt()
 
-        // hasValidCharacters: Checks if only valid numbers and '-' are used
-        /**
-         * Why is Set efficient here?
-         * Imagine you have a 9x9 board (81 cells).
-         * The code checks each cell's character against the validChars set.
-         * If validChars was a List instead of a Set,
-         * checking it in validChars would potentially require scanning through the list items one by one (O(N) lookup, where N is the number of valid characters).
-         * Doing this 81 times would be slower.
-         * Since Set provides O(1) average lookup time, checking all 81 cells is much faster.
-         * The larger the board, the more significant this efficiency gain becomes.
-         **/
-        private fun hasValidCharacters(board: Array<Array<Char>>): Boolean {
-            val size = board.size
-            val validChars = (('1'..('0' + size)).toSet() + '-')
-            return board.all { row ->
-                row.all { it in validChars }
-            }
-        }
+    // Check if size is a perfect square
+    // Check if all rows have correct length
+    return boxSize * boxSize == size && board.all { it.size == size }
+}
 
-        private fun hasValidRows(board: Array<Array<Char>>): Boolean {
-            return board.all { row -> isValidGroup(row.toList()) }
-        }
+// Checks if only valid numbers and '-' are used
+private fun hasValidCharacters(board: Array<Array<Char>>): Boolean {
+    val size = board.size
+    // This ensures ('0' + size) is treated correctly as a Char
+    val validChars = ('1'..('0' + size)).plus('-').toSet()
+    return board.all { row ->
+        row.all { it in validChars }
+    }
+}
 
-        private fun hasValidColumns(board: Array<Array<Char>>): Boolean {
-            val size = board.size
-            return (0 until size).all { col ->
-                val column = board.map { it[col] }
-                isValidGroup(column)
-            }
-        }
+private fun hasValidRowsColumnsAndBoxes(board: Array<Array<Char>>): Boolean {
 
-        private fun hasValidBoxes(board: Array<Array<Char>>): Boolean {
-            val size = board.size
-            val boxSize = sqrt(size.toDouble()).toInt()
+    val size = board.size
+    val boxSize = sqrt(size.toDouble()).toInt()
 
-            for (boxRow in 0 until size step boxSize) {
-                for (boxCol in 0 until size step boxSize) {
-                    val box = getBox(board, boxRow, boxCol, boxSize)
-                    if (!isValidGroup(box)) return false
-                }
-            }
-            return true
-        }
+    // track numbers that have already appeared in the corresponding row, column, and sub-box.
+    // A Set is an efficient data structure because it automatically handles duplicates.
+    val rowSets = Array(size) { mutableSetOf<Char>() }
+    val colSets = Array(size) { mutableSetOf<Char>() }
+    val boxSets = Array(size) { mutableSetOf<Char>() }
 
-        // getBox: Extracts a box from the board
-        private fun getBox(
-            board: Array<Array<Char>>,
-            startRow: Int,
-            startCol: Int,
-            boxSize: Int
-        ): List<Char> {
-            val box = mutableListOf<Char>()
-            for (row in startRow until startRow + boxSize) {
-                for (col in startCol until startCol + boxSize) {
-                    box.add(board[row][col])
-                }
-            }
-            return box
-        }
+    for (row in 0 until size) {
+        for (col in 0 until size) {
+            val cell = board[row][col]
 
-        // isValidGroup: Generic function for checking duplicates in any group
-        // check row, colum and box
-        private fun isValidGroup(group: List<Char>): Boolean {
-            val seen = mutableSetOf<Char>()
-            return group.all { char ->
-                char == '-' || seen.add(char)
+            if (cell == '-') continue // Skip empty cells
+
+            val boxIndex = (row / boxSize) * boxSize + (col / boxSize) // Calculate the box index
+
+            // Check row, column, and box at the same time
+            // O(1) lookup per cell,
+            // trying to add it again will return false
+            if (!rowSets[row].add(cell) || !colSets[col].add(cell) || !boxSets[boxIndex].add(cell)) {
+                return false
             }
         }
     }
+    return true
 }

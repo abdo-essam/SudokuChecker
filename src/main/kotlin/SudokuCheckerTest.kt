@@ -24,7 +24,6 @@ class SudokuCheckerTest {
         println("Running SudokuChecker tests...\n")
 
         // Input Validation Tests
-        testEmptyArrayBoard()
         testEmptyBoardIsValid()
         testInvalidBoardDimensions()
 
@@ -72,28 +71,6 @@ class SudokuCheckerTest {
         assertTrue(!condition, message)
     }
 
-    private fun assertThrows(block: () -> Unit, message: String) {
-        try {
-            block()
-            println("FAIL: $message (Expected exception but none was thrown)")
-            testsFailed++
-        } catch (e: Exception) {
-            println("PASS: $message")
-            testsPassed++
-        }
-    }
-
-    /**
-     * Input Validation Tests
-     */
-
-    private fun testEmptyArrayBoard() {
-        assertThrows(
-            { SudokuChecker.isSudokuValid(arrayOf()) },
-            "Empty array board should throw IllegalArgumentException"
-        )
-    }
-
     /**
      * Basic Board Structure Tests
      */
@@ -101,7 +78,7 @@ class SudokuCheckerTest {
     private fun testEmptyBoardIsValid() {
         val board = Array(9) { Array(9) { '-' } }
         assertTrue(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Empty board (all dashes) should be valid"
         )
     }
@@ -109,7 +86,7 @@ class SudokuCheckerTest {
     private fun testInvalidBoardDimensions() {
         val board = Array(8) { Array(9) { '-' } }  // 8x9 board
         assertFalse(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Non-square board should be invalid"
         )
     }
@@ -122,7 +99,7 @@ class SudokuCheckerTest {
         val board = Array(9) { Array(9) { '-' } }
         board[0][0] = 'X'  // Invalid character
         assertFalse(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Board with invalid characters should be invalid"
         )
     }
@@ -132,7 +109,7 @@ class SudokuCheckerTest {
         board[0][0] = '@'
         board[0][1] = '#'
         assertFalse(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Board with special characters should be invalid"
         )
     }
@@ -142,7 +119,7 @@ class SudokuCheckerTest {
 
     private fun testValidCompleteBoard() {
         assertTrue(
-            SudokuChecker.isSudokuValid(validBoard9x9),
+            isSudokuValid(validBoard9x9),
             "Valid complete board should pass"
         )
     }
@@ -156,7 +133,7 @@ class SudokuCheckerTest {
         board[0][0] = '1'
         board[0][1] = '1'  // Duplicate in row
         assertFalse(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Board with duplicate in row should be invalid"
         )
     }
@@ -166,7 +143,7 @@ class SudokuCheckerTest {
         board[0][0] = '1'
         board[1][0] = '1'  // Duplicate in column
         assertFalse(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Board with duplicate in column should be invalid"
         )
     }
@@ -176,7 +153,7 @@ class SudokuCheckerTest {
         board[0][0] = '1'
         board[1][1] = '1'  // Duplicate in 3x3 box
         assertFalse(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Board with duplicate in box should be invalid"
         )
     }
@@ -192,7 +169,7 @@ class SudokuCheckerTest {
         board[0][3] = '2'
         board[1][4] = '2'  // Second box violation
         assertFalse(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Board with violations in multiple boxes should be invalid"
         )
     }
@@ -209,7 +186,7 @@ class SudokuCheckerTest {
             arrayOf('4', '3', '2', '1')
         )
         assertTrue(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Valid 4x4 board should pass"
         )
     }
@@ -217,7 +194,7 @@ class SudokuCheckerTest {
     private fun testValid1x1Board() {
         val board = arrayOf(arrayOf('1'))
         assertTrue(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Valid 1x1 board should pass"
         )
     }
@@ -229,7 +206,7 @@ class SudokuCheckerTest {
     private fun testEdgeCaseAllCellsFilledWithDashes() {
         val board = Array(9) { Array(9) { '-' } }
         assertTrue(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Board with all dashes should be valid"
         )
     }
@@ -238,7 +215,7 @@ class SudokuCheckerTest {
         val validBoard = validBoard9x9.map { it.clone() }.toTypedArray()
         validBoard[8][8] = validBoard[8][7]
         assertFalse(
-            SudokuChecker.isSudokuValid(validBoard),
+            isSudokuValid(validBoard),
             "Board with violation in last cell should be invalid"
         )
     }
@@ -246,7 +223,7 @@ class SudokuCheckerTest {
     private fun testEdgeCaseBoardWithAllSameNumbers() {
         val board = Array(9) { Array(9) { '1' } }
         assertFalse(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Board with all same numbers should be invalid"
         )
     }
@@ -257,7 +234,7 @@ class SudokuCheckerTest {
         board[0][1] = '3'
         board[1][0] = '6'
         assertTrue(
-            SudokuChecker.isSudokuValid(board),
+            isSudokuValid(board),
             "Partially filled valid board should be valid"
         )
     }

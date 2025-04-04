@@ -8,7 +8,7 @@ object SudokuBenchmark {
             val board = generateValidBoard(size)
             val startTime = System.nanoTime()
             repeat(100) {
-                SudokuChecker.isSudokuValid(board)
+                isSudokuValid(board)
             }
             val endTime = System.nanoTime()
             val averageTime = (endTime - startTime) / 100 / 1_000_000.0
