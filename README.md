@@ -15,4 +15,4 @@ This validator checks if a given Sudoku board is valid according to standard Sud
 
 | Flowchart |
 |---|
-| <img src="isSudokuValid.drawio.png" width="250"> 
+| <img src="isSudokuValid.drawio.png"> 
